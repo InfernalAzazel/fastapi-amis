@@ -1,7 +1,7 @@
 from typing import Callable
 from pydantic import Field
-from fastapi_amis.amis.constants import * # noqa
-from fastapi_amis.amis.types import * # noqa
+from fastapi_amis.amis.constants import *  # noqa
+from fastapi_amis.amis.types import *  # noqa
 
 RemarkT = Union[str, "Remark"]
 
@@ -22,7 +22,7 @@ class Collapse(AmisNode):
     collapsed: bool = True
     """初始状态是否折叠"""
 
-    key: Optional[Union[str, int]] = None  # noqa: F405
+    key: Optional[Union[str, int]] = None
     """标识"""
 
     header: Optional[Union[str, SchemaNode]] = None
@@ -8109,7 +8109,7 @@ class Image(AmisNode):
     - 默认值：true
     """
 
-    thumbMode:  Optional[Literal['w-full', 'h-full', 'contain', 'cover']] = None
+    thumbMode: Optional[Literal["w-full", "h-full", "contain", "cover"]] = None
     """
     - 预览图模式
     - 默认值：'contain'
@@ -8202,7 +8202,7 @@ class Images(AmisNode):
     enlargeWithGallary: Optional[bool] = None
     """默认在放大功能展示图片集的所有图片信息；表格中使用时，设置为true将展示所有行的图片信息；设置为false将关闭放大模式下图片集列表的展示"""
 
-    thumbMode: Optional[Literal['w-full', 'h-full', 'contain', 'cover']] = None
+    thumbMode: Optional[Literal["w-full", "h-full", "contain", "cover"]] = None
     """
     - 预览图模式
     - 默认值：'contain'
