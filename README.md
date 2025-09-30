@@ -122,17 +122,6 @@ site.add_router(user_router)
 site.mount_to_app(app)
 ```
 
-## API 接口
-
-示例中提供了完整的 RESTful API 接口：
-
-- `GET /api/users` - 获取用户列表（支持分页和搜索）
-- `POST /api/users` - 创建新用户
-- `PUT /api/users/{user_id}` - 更新用户信息
-- `DELETE /api/users/{user_id}` - 删除用户
-- `GET /api/system/settings` - 获取系统设置
-- `POST /api/system/settings` - 更新系统设置
-
 ## 开发说明
 
 - 项目使用 Python 3.10+ 开发
