@@ -1,8 +1,9 @@
 from pathlib import Path
-from typing import Dict, Any, Union, List, Literal, Optional
+from typing import Dict, Any, TypeVar, Union, List, Literal, Optional, Generic
 from jinja2 import Environment, FileSystemLoader
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
+T = TypeVar("T")
 Expression = str
 DataMapping = str
 Template = Union[str, "Tpl", dict]
@@ -29,13 +30,13 @@ class BaseAmisModel(BaseModel):
         return self.update_from_dict(kwargs)
 
 
-class BaseAmisApiOut(BaseAmisModel):
+class BaseAmisApiOut(BaseAmisModel, Generic[T]):
     """api接口输出数据格式"""
-    status: int = 0
+    status: int = Field(0, description="状态码，0代表成功，其他代表失败")
     """状态码，0代表成功，其他代表失败"""
-    msg: str = ''
+    msg: str = Field("", description="提示信息")
     """提示信息"""
-    data: dict = None
+    data: Optional[T] = Field(None, description="返回数据")
     """回传数据"""
 
 
