@@ -124,7 +124,7 @@ class AmisSite:
         Note:
             每个路由器都有唯一的ID，即使名称相同也能正确注册
         """
-        router_id = router.router_id
+        router_id = router.id
         self._router_names[router_id] = router.name
         
         target_routers = self._page_routers if router.type == "page" else self._app_routers

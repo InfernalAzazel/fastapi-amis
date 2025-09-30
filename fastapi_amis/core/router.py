@@ -15,8 +15,8 @@ class AmisViewRouter:
     def __init__(
             self, 
             name: str = "default",
-            type: Literal['app', 'page'] = 'app',
-            router_id: Optional[str] = None
+            type: Literal['app', 'page'] = 'app', # noqa
+            id: Optional[str] = None # noqa
     ):
         """
         初始化 AmisViewRouter 实例
@@ -24,11 +24,11 @@ class AmisViewRouter:
         Args:
             name: 路由器名称，用于标识和显示
             type: 路由器类型，'app' 表示应用路由器，'page' 表示页面路由器
-            router_id: 路由器唯一ID，如果不提供则自动生成UUID
+            id: 路由器唯一ID，如果不提供则自动生成UUID
         """
         self.name = name
         self.type = type
-        self.router_id = router_id or str(uuid.uuid4())
+        self.id = id or str(uuid.uuid4())
         self.views: Dict[str, AmisView] = {}  # 视图名称 -> 视图实例
         self.pages: List[PageSchema] = []     # 页面配置列表
 
@@ -119,7 +119,7 @@ class AmisViewRouter:
         return {
             "name": self.name,
             "type": self.type,
-            "router_id": self.router_id,
+            "router_id": self.id,
             "views_count": len(self.views),
             "pages_count": len(self.pages),
             "views": list(self.views.keys()),
