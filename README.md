@@ -2,6 +2,8 @@
 
 FastAPI Amis 是一个基于 FastAPI 和 Amis 的 Python 框架，用于快速构建现代化的管理后台界面。
 
+> 目前正在实验中请不要投入生产项目
+
 ## 功能特性
 
 - 🚀 基于 FastAPI 的高性能 Web 框架
