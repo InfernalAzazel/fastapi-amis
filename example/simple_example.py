@@ -5,14 +5,16 @@ from fastapi_amis.core.views import AmisView
 from fastapi_amis.amis.components import Page
 
 # 创建路由器
-user_router = AmisViewRouter(name="users", type="page")
-system_router = AmisViewRouter(name="system", type="app")
+user_router = AmisViewRouter(name="a", type="app")
+system_router = AmisViewRouter(name="a", type="app")
+auth_router = AmisViewRouter(name="auth", type="page")
 
 # 用户视图
 @user_router.register
 class UserListView(AmisView):
     page_schema = "用户列表"
     url = "/users"
+    icon = "fa fa-user"
     page = Page(
         title="用户列表",
         body={
@@ -50,6 +52,7 @@ class UserListView(AmisView):
 class UserCreateView(AmisView):
     page_schema = "创建用户"
     url = "/users/create"
+    icon = "fa fa-user"
     page = Page(
         title="创建用户",
         body={
@@ -81,6 +84,7 @@ class UserCreateView(AmisView):
 class SystemInfoView(AmisView):
     page_schema = "系统信息"
     url = "/system/info"
+    icon = "fa fa-server"
     page = Page(
         title="系统信息",
         body={
@@ -103,6 +107,7 @@ class SystemInfoView(AmisView):
 class SystemSettingsView(AmisView):
     page_schema = "系统设置"
     url = "/system/settings"
+    icon = "fa fa-cog"
     page = Page(
         title="系统设置",
         body={
@@ -130,21 +135,85 @@ class SystemSettingsView(AmisView):
         }
     )
 
+# 认证视图
+@auth_router.register
+class LoginView(AmisView):
+    page_schema = "用户登录"
+    url = "/login"
+    page = Page(
+        title="用户登录",
+        body={
+            "type": "form",
+            "api": "/api/auth/login",
+            "mode": "horizontal",
+            "wrapWithPanel": True,
+            "panelClassName": "login-panel",
+            "body": [
+                {
+                    "type": "input-text",
+                    "name": "username",
+                    "label": "用户名",
+                    "required": True,
+                    "placeholder": "请输入用户名",
+                    "clearable": True,
+                    "prefix": {
+                        "type": "icon",
+                        "icon": "fa fa-user"
+                    }
+                },
+                {
+                    "type": "input-password",
+                    "name": "password",
+                    "label": "密码",
+                    "required": True,
+                    "placeholder": "请输入密码",
+                    "clearable": True,
+                    "prefix": {
+                        "type": "icon",
+                        "icon": "fa fa-lock"
+                    }
+                },
+                {
+                    "type": "switch",
+                    "name": "remember_me",
+                    "label": "记住我",
+                    "value": False
+                }
+            ],
+            "actions": [
+                {
+                    "type": "submit",
+                    "label": "登录",
+                    "level": "primary",
+                    "size": "lg",
+                    "className": "w-full"
+                }
+            ],
+            "redirect": "/admin",
+            "messages": {
+                "saveSuccess": "登录成功！"
+            }
+        }
+    )
+
 
 def create_app():
     """创建 FastAPI 应用"""
     app = FastAPI(title="FastAPI Amis Admin")
     
     # 创建站点并注册路由器
+    # 挂载到根路径 "/"
     site = AmisSite(title="管理后台")
     site.add_router(user_router)
     site.add_router(system_router)
-    site.mount_to_app(app)
+    site.add_router(auth_router)
+    site.mount_to_app(app) 
+    
 
     # 基本路由
-    @app.get("/")
-    async def root():
-        return {"message": "FastAPI Amis Admin", "site_info": site.get_site_info()}
+    @app.get("/api/info")
+    async def api_info():
+        return {"message": "FastAPI Amis Admin", "site_info": site.site_info}
 
     # 用户管理 API
     @app.get("/api/users")
@@ -245,6 +314,44 @@ def create_app():
             }
         }
 
+    # 认证 API
+    @app.post("/api/auth/login")
+    async def login(login_data: dict):
+        """用户登录"""
+        username = login_data.get("username")
+        password = login_data.get("password")
+        remember_me = login_data.get("remember_me", False)
+        
+        # 简单的认证逻辑（实际项目中应该查询数据库）
+        if username == "admin" and password == "admin123":
+            return {
+                "status": 0,
+                "msg": "登录成功",
+                "data": {
+                    "user": {
+                        "id": 1,
+                        "username": "admin",
+                        "email": "admin@example.com",
+                        "role": "admin"
+                    },
+                    "token": "mock_jwt_token_123456789",
+                    "expires_in": 3600 if not remember_me else 86400 * 7  # 1小时或7天
+                }
+            }
+        else:
+            return {
+                "status": 1,
+                "msg": "用户名或密码错误"
+            }
+
+    @app.post("/api/auth/logout")
+    async def logout():
+        """用户登出"""
+        return {
+            "status": 0,
+            "msg": "登出成功"
+        }
+
     return app
 
 
@@ -252,9 +359,12 @@ if __name__ == "__main__":
     import uvicorn
     
     print("=== FastAPI Amis Admin 示例 ===")
-    print("访问 http://localhost:4000 查看应用")
-    print("访问 http://localhost:4000/users 查看用户页面")
-    print("访问 http://localhost:4000/system/info 查看系统信息")
+    print("访问 http://localhost:4000/ 查看管理后台")
+    print("访问 http://localhost:4000/login 查看登录页面")
+    print("访问 http://localhost:4000/api/info 查看应用信息")
+    print("\n登录信息:")
+    print("用户名: admin")
+    print("密码: admin123")
     
     app = create_app()
     uvicorn.run(app, host="0.0.0.0", port=4000)

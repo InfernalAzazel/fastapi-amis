@@ -1,4 +1,5 @@
 from typing import Dict, List, Literal, Type, Any, Optional, Callable, Union
+import uuid
 from fastapi_amis.amis.components import PageSchema
 from fastapi_amis.core.views import AmisView
 
@@ -12,23 +13,43 @@ class AmisViewRouter:
     """
 
     def __init__(
-            self, name: str = "default",
-            type: Literal['app', 'page'] = 'app'
+            self, 
+            name: str = "default",
+            type: Literal['app', 'page'] = 'app',
+            router_id: Optional[str] = None
     ):
+        """
+        初始化 AmisViewRouter 实例
+        
+        Args:
+            name: 路由器名称，用于标识和显示
+            type: 路由器类型，'app' 表示应用路由器，'page' 表示页面路由器
+            router_id: 路由器唯一ID，如果不提供则自动生成UUID
+        """
         self.name = name
         self.type = type
-        self.views: Dict[str, AmisView] = {}
-        self.pages: List[PageSchema] = []
+        self.router_id = router_id or str(uuid.uuid4())
+        self.views: Dict[str, AmisView] = {}  # 视图名称 -> 视图实例
+        self.pages: List[PageSchema] = []     # 页面配置列表
 
     def register(self, view_class: Optional[Type[AmisView]] = None) -> Union[Callable, Type[AmisView]]:
         """
-        注册 AmisView 的装饰器
+        注册 AmisView 的装饰器方法
         
         Args:
-            view_class: 可选的视图类，如果提供则直接注册
+            view_class: 可选的视图类，如果提供则直接注册，否则返回装饰器函数
             
         Returns:
-            装饰器函数或已注册的类
+            Union[Callable, Type[AmisView]]: 装饰器函数或已注册的类
+            
+        Example:
+            @router.register
+            class MyView(AmisView):
+                # 视图定义
+                pass
+                
+            # 或者直接注册
+            router.register(MyView)
         """
 
         def decorator(cls: Type[AmisView]) -> Type[AmisView]:
@@ -37,10 +58,9 @@ class AmisViewRouter:
                 view_name = cls.__name__
                 self.views[view_name] = view
 
-                # 收集页面配置，但不处理路由
-                page_schema = view.get_page_schema()
+                # 收集页面配置
+                page_schema = view.page_schema_config
                 if page_schema:
-                    # 添加到页面列表
                     self.pages.append(page_schema)
                 else:
                     raise ValueError(f"视图 {cls.__name__} 没有有效的页面配置")
@@ -51,71 +71,55 @@ class AmisViewRouter:
 
         return decorator if view_class is None else decorator(view_class)
 
-    def add_view(self, view: AmisView, name: Optional[str] = None) -> str:
+
+    @property
+    def views_dict(self) -> Dict[str, AmisView]:
         """
-        直接添加视图实例
+        获取所有视图的副本
         
-        Args:
-            view: 视图实例
-            name: 可选的名称，如果不提供则使用类名
-            
         Returns:
-            注册的名称
+            Dict[str, AmisView]: 视图名称到视图实例的字典副本
         """
-        view_name = name or view.__class__.__name__
-        self.views[view_name] = view
-
-        page_schema = view.get_page_schema()
-        if page_schema:
-            self.pages.append(page_schema)
-
-        return view_name
-
-    def remove_view(self, name: str) -> bool:
-        """
-        移除视图
-        
-        Args:
-            name: 视图名称
-            
-        Returns:
-            是否成功移除
-        """
-        if name in self.views:
-            view = self.views.pop(name)
-            # 同时从页面列表中移除
-            page_schema = view.get_page_schema()
-            if page_schema and page_schema in self.pages:
-                self.pages.remove(page_schema)
-            return True
-        return False
-
-    def get_view(self, name: str) -> Optional[AmisView]:
-        """获取指定名称的视图"""
-        return self.views.get(name)
-
-    def list_views(self) -> List[str]:
-        """列出所有已注册的视图名称"""
-        return list(self.views.keys())
-
-    def get_views(self) -> Dict[str, AmisView]:
-        """获取所有视图的副本"""
         return self.views.copy()
 
-    def get_pages(self) -> List[PageSchema]:
-        """获取所有页面配置"""
+    @property
+    def pages_list(self) -> List[PageSchema]:
+        """
+        获取所有页面配置
+        
+        Returns:
+            List[PageSchema]: 页面配置列表的副本
+        """
         return self.pages.copy()
 
     def clear(self) -> None:
-        """清空所有注册的视图"""
+        """
+        清空所有注册的视图和页面配置
+        
+        移除所有已注册的视图实例和页面配置，重置路由器状态
+        """
         self.views.clear()
         self.pages.clear()
 
-    def get_router_info(self) -> Dict[str, Any]:
-        """获取路由器信息"""
+    @property
+    def router_info(self) -> Dict[str, Any]:
+        """
+        获取路由器的详细信息
+        
+        Returns:
+            Dict[str, Any]: 包含路由器详细信息的字典，包括：
+                - name: 路由器名称
+                - type: 路由器类型
+                - router_id: 路由器唯一ID
+                - views_count: 视图数量
+                - pages_count: 页面数量
+                - views: 视图名称列表
+                - pages: 页面URL列表
+        """
         return {
             "name": self.name,
             "type": self.type,
+            "router_id": self.router_id,
             "views_count": len(self.views),
             "pages_count": len(self.pages),
             "views": list(self.views.keys()),
