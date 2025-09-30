@@ -1,4 +1,4 @@
-from typing import Optional, Any, Generic
+from typing import Optional, Any
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 import logging
