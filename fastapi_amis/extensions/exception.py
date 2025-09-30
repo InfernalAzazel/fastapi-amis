@@ -2,13 +2,9 @@ from typing import Optional, Any, Generic
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 import logging
-from fastapi_amis.amis.types import BaseAmisApiOut, T
-
+from fastapi_amis.amis.types import BaseAmisApiOut
 
 logger = logging.getLogger(__name__)
-
-
-
 
 class BaseAmisExceptionCode:
     """
