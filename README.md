@@ -202,6 +202,16 @@ source .venv/bin/activate  # Linux/Mac
 .venv\Scripts\activate  # Windows
 ```
 
+## 参考和感谢
+
+本项目受到了以下优秀项目的启发和影响：
+
+### 特别感谢
+
+感谢 [amisadmin](https://github.com/amisadmin) 团队开发的 FastAPI-Amis-Admin 项目，为我们提供了宝贵的架构参考和设计思路。
+
+感谢百度 [Amis](https://github.com/baidu/amis.git) 团队提供的优秀前端组件库，让后端开发者也能轻松构建现代化的管理界面。
+
 ## 贡献
 
 欢迎提交 Issue 和 Pull Request 来改进这个项目。
