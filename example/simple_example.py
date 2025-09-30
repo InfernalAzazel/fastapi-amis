@@ -367,4 +367,4 @@ if __name__ == "__main__":
     print("密码: admin123")
     
     app = create_app()
-    uvicorn.run(app, host="0.0.0.0", port=4000)
+    uvicorn.run(app, host="0.0.0.0", port=4000, log_config=None)

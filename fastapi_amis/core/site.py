@@ -1,11 +1,9 @@
-import logging
 from typing import Dict, List, Optional, Any
 from fastapi import FastAPI, APIRouter
 from fastapi.responses import HTMLResponse
 from fastapi_amis.amis.components import App, Page, PageSchema
+from fastapi_amis.core.logger import logger, LogConfig
 from .router import AmisViewRouter
-
-logger = logging.getLogger(__name__)
 
 
 class AmisSite:
@@ -23,6 +21,7 @@ class AmisSite:
             title: str = "FastAPI Amis Admin",
             logo: str = "https://suda.cdn.bcebos.com/images%2F2021-01%2Fdiamond.svg",
             mount_path: str = "/",
+            intercept_fastapi_logs: bool = True,
     ) -> None:
         """
         初始化 AmisSite 实例
@@ -31,6 +30,7 @@ class AmisSite:
             title: 站点标题，显示在页面顶部
             logo: 站点Logo URL，显示在页面顶部
             mount_path: 挂载路径，默认为根路径 "/"
+            intercept_fastapi_logs: 是否接管 FastAPI/Uvicorn 的日志到 loguru，默认 True
         """
         self.title = title
         self.logo = logo
@@ -39,6 +39,10 @@ class AmisSite:
         self._page_routers: Dict[str, AmisViewRouter] = {}  # router_id -> router
         self._app_routers: Dict[str, AmisViewRouter] = {}   # router_id -> router
         self._router_names: Dict[str, str] = {}  # router_id -> name (for display)
+        
+        # 接管 FastAPI/Uvicorn 日志
+        if intercept_fastapi_logs:
+            LogConfig.intercept_logging()
 
     def _setup_route(self) -> None:
         """
@@ -204,6 +208,15 @@ class AmisSite:
         
         Args:
             app: FastAPI 应用实例
+            
+        Note:
+            如果启用了 intercept_fastapi_logs，请在 uvicorn.run 时设置 log_config=None
+            
+        Examples:
+            >>> import uvicorn
+            >>> site = AmisSite(intercept_fastapi_logs=True)
+            >>> site.mount_to_app(app)
+            >>> uvicorn.run(app, log_config=None)  # 禁用 uvicorn 默认日志
         """
         app.include_router(self._api_router)
 

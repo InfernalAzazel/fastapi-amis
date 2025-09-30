@@ -1,17 +1,26 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi_amis.extensions.exception import (
     AmisAPIException,
     AmisExceptionCode,
     AmisResponseModel,
-    BaseAmisExceptionCode,
     register_amis_exception_handlers,
 )
+
+# 默认已自动配置日志（INFO 级别，控制台输出）
+# 如需自定义，使用：
+# from fastapi_amis.core import LogConfig, configure_logging
+# configure_logging({"level": "DEBUG", "log_file": "logs/app.log"})
+# LogConfig.intercept_logging()  # 接管 FastAPI/Uvicorn 日志
 
 app = FastAPI()
 
 # 1. 注册异常处理器
 register_amis_exception_handlers(app)
+
+# 自定义状态码映射示例：
+# custom_map = {400: 1001, 401: 2000, 403: 2001, 404: 3000}
+# register_amis_exception_handlers(app, status_map=custom_map)
 
 
 # 2. 定义数据模型
@@ -44,8 +53,23 @@ async def uncaught():
     # 返回: {"status": 1000, "msg": "服务器内部错误", "data": null}
 
 
-# 6. 自定义异常代码
-class OrderExceptionCode(BaseAmisExceptionCode):
+# 6. FastAPI HTTPException 自动处理
+@app.get("/http-error")
+async def http_error():
+    raise HTTPException(status_code=404, detail="资源未找到")
+    # 返回: {"status": 1004, "msg": "资源未找到", "data": null}
+
+
+# 7. Pydantic 验证错误自动处理
+@app.get("/validation-error")
+async def validation_error(age: int):
+    return {"age": age}
+    # 访问 /validation-error?age=abc 会返回:
+    # {"status": 1001, "msg": "参数验证失败", "data": {"errors": [...]}}
+
+
+# 8. 自定义异常代码
+class OrderExceptionCode(AmisExceptionCode):
     ORDER_NOT_FOUND = (5001, "订单不存在", "指定的订单ID不存在")
     PAYMENT_FAILED = (5002, "支付失败", "支付处理时发生错误")
 
@@ -57,32 +81,17 @@ async def get_order(order_id: int):
     return AmisResponseModel(data={"order_id": order_id}, msg="获取成功")
 
 
-# 7. 预定义异常代码列表
-"""
-通用异常 (1xxx):
-- INTERNAL_ERROR = (1000, "服务器内部错误", "...")
-- INVALID_PARAMS = (1001, "参数错误", "...")
-- UNAUTHORIZED = (1002, "未授权", "...")
-- FORBIDDEN = (1003, "无权限", "...")
-- NOT_FOUND = (1004, "资源不存在", "...")
-
-用户异常 (2xxx):
-- USER_NOT_FOUND = (2001, "用户不存在", "...")
-- USER_ALREADY_EXISTS = (2002, "用户已存在", "...")
-- USER_PASSWORD_ERROR = (2003, "密码错误", "...")
-- USER_DISABLED = (2004, "用户已禁用", "...")
-
-API 异常 (3xxx):
-- INVALID_API_KEY = (3001, "无效的 API Key", "...")
-- API_RATE_LIMIT = (3002, "请求过于频繁", "...")
-
-数据异常 (4xxx):
-- DATA_NOT_FOUND = (4001, "数据不存在", "...")
-- DATA_ALREADY_EXISTS = (4002, "数据已存在", "...")
-- DATA_VALIDATION_ERROR = (4003, "数据验证失败", "...")
-"""
-
-
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5000)
+    from fastapi_amis.core import LogConfig
+    
+    # 在启动前接管日志
+    LogConfig.intercept_logging()
+    
+    # 使用 log_config=None 禁用 uvicorn 默认日志配置
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=5000,
+        log_config=None  # 关键：禁用 uvicorn 默认日志配置
+    )
