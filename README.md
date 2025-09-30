@@ -45,66 +45,25 @@ uv sync
 
 项目提供了两个示例，展示不同的使用方式：
 
-### 示例 1：简单页面示例 (simple_example.py)
-
-这个示例展示了如何创建简单的 Amis 页面。
-
-**运行步骤：**
-
-1. 进入示例目录：
+### 示例 1：完整管理后台 (simple_example.py)
 ```bash
 cd example
-```
-
-2. 运行简单示例：
-```bash
 uv run python simple_example.py
 ```
+访问：http://localhost:4000
 
-3. 访问应用：
-   - 打开浏览器访问：http://localhost:4000
-   - 用户管理页面：http://localhost:4000/users
-   - 系统信息页面：http://localhost:4000/system/info
-   - 系统设置页面：http://localhost:4000/system/settings
-
-**功能说明：**
-- 用户列表页面：展示用户数据表格，支持搜索、分页
-- 用户创建页面：表单创建新用户
-- 系统信息页面：显示系统状态信息
-- 系统设置页面：系统配置管理
-
-### 示例 2：多页面应用示例 (main.py)
-
-这个示例展示了如何构建多页面的 Amis 应用。
-
-**运行步骤：**
-
-1. 运行主示例：
+### 示例 2：简单多页面应用 (main.py)
 ```bash
+cd example
 uv run python main.py
 ```
+访问：http://localhost:3000
 
-2. 访问应用：
-   - 打开浏览器访问：http://localhost:3000
-   - 卡片页面：http://localhost:3000/cards
-
-**功能说明：**
-- 首页：显示简单的欢迎页面
-- 卡片页面：展示信息卡片和快速操作按钮
-
-### 使用 uvicorn 运行
-
-你也可以使用 uvicorn 命令直接运行：
-
-**运行简单示例：**
+### 使用 uvicorn 运行（可选）
 ```bash
 cd example
 uv run uvicorn simple_example:create_app --host 0.0.0.0 --port 4000 --reload
-```
-
-**运行主示例：**
-```bash
-cd example
+# 或
 uv run uvicorn main:app --host 0.0.0.0 --port 3000 --reload
 ```
 
