@@ -4,11 +4,13 @@ version = "0.0.1"
 description = "FastAPI Amis"
 readme = "README.md"
 requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
 authors = [
     {name = "kylin", email = "260987762@qq.com"}
 ]
 dependencies = []
 classifiers = [
+    "License :: OSI Approved :: Apache Software License",
     "Intended Audience :: Information Technology",
     "Intended Audience :: System Administrators",
     "Operating System :: OS Independent",
