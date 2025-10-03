@@ -1,13 +1,38 @@
 [project]
 name = "fastapi-amis"
-version = "0.1.0"
+version = "1.0.1"
 description = "FastAPI Amis"
 readme = "README.md"
 requires-python = ">=3.10"
+authors = [
+    {name = "kylin", email = "260987762@qq.com"}
+]
 dependencies = []
+classifiers = [
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python",
+    "Topic :: Internet",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development",
+    "Typing :: Typed",
+    "Environment :: Web Environment",
+    "Framework :: AsyncIO",
+    "Framework :: FastAPI",
+    "Framework :: Pydantic",
+    "Framework :: Pydantic :: 2",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
 
 [project.urls]
 Homepage = "https://github.com/InfernalAzazel/fastapi-amis"
+Documentation = "https://infernalazazel.github.io/fastapi-amis/"
 Repository = "https://github.com/InfernalAzazel/fastapi-amis"
 
 [build-system]
@@ -30,3 +55,5 @@ dev = [
     "pytest-asyncio>=1.2.0",
     "ujson>=5.11.0",
 ]
+
+
