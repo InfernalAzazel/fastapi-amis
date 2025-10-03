@@ -25,7 +25,9 @@ jobs:
 
       - name: Build release distributions
         run: |
-          uv build
+          uv build --verbose
+          ls -lh dist
+          unzip -p dist/*.whl | head -20
 
       - name: Upload release distributions
         uses: actions/upload-artifact@v4
@@ -45,7 +47,10 @@ jobs:
           name: release-dists
           path: dist/
 
+      - name: Inspect wheel before publish
+        run: |
+          ls -lh dist
+          unzip -p dist/*.whl | head -20
+
       - name: Publish release distributions to PyPI
         uses: pypa/gh-action-pypi-publish@v1.8.14
-        with:
-          attestations: true
