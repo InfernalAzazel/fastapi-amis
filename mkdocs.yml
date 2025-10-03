@@ -1,4 +1,88 @@
-site_name: My Docs
-site_url: https://mydomain.org/mysite
+site_name: FastAPI Amis
+site_url: https://infernalazazel.github.io/fastapi-amis/
+site_description: 基于 FastAPI 和 Amis 的 Python 框架，用于快速构建现代化的管理后台界面
+site_author: kylin
+repo_url: https://github.com/InfernalAzazel/fastapi-amis
+repo_name: fastapi-amis
+
 theme:
   name: material
+  language: zh
+  palette:
+    # 浅色模式
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: 切换至深色模式
+    # 深色模式
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: 切换至浅色模式
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+
+plugins:
+  - search:
+      lang:
+        - zh
+        - en
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - 首页: index.md
+  - 快速开始:
+      - 安装: getting-started/installation.md
+      - 第一个应用: getting-started/first-app.md
+      - 示例项目: getting-started/examples.md
+  - 用户指南:
+      - 核心概念: guide/concepts.md
+      - 视图和路由: guide/views-and-routers.md
+      - Amis 组件: guide/amis-components.md
+      - 站点配置: guide/site-configuration.md
+  - API 参考:
+      - 核心模块: api/core.md
+      - Amis 组件: api/components.md
+      - 扩展功能: api/extensions.md
+  - 最佳实践:
+      - 项目结构: best-practices/project-structure.md
+      - 开发建议: best-practices/development.md
+  - 贡献指南: contributing.md
+  - 更新日志: changelog.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/InfernalAzazel/fastapi-amis
+  version:
+    provider: mike
