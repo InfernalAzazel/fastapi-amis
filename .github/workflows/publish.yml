@@ -16,26 +16,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-      - name: Install Poetry
-        run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-          export PATH="$HOME/.local/bin:$PATH"
-
-      - name: Rebuild poetry.lock
-        run: |
-          poetry lock --no-update
-
       - name: Install dependencies
         run: |
-          poetry install
+          uv sync
 
       - name: Build release distributions
         run: |
-          poetry build
+          uv build
 
       - name: Upload release distributions
         uses: actions/upload-artifact@v4
