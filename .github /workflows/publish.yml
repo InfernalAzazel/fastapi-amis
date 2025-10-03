@@ -1,0 +1,59 @@
+name: Publish PyPi
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # 仅匹配类似 v1.0.0 的标签
+
+permissions:
+  id-token: write  # 允许请求 OIDC JWT
+  contents: read   # 允许 actions/checkout 使用
+
+jobs:
+  release-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          export PATH="$HOME/.local/bin:$PATH"
+
+      - name: Rebuild poetry.lock
+        run: |
+          poetry lock --no-update
+
+      - name: Install dependencies
+        run: |
+          poetry install
+
+      - name: Build release distributions
+        run: |
+          poetry build
+
+      - name: Upload release distributions
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-dists
+          path: dist/
+
+  pypi-publish:
+    runs-on: ubuntu-latest
+    needs: release-build
+    steps:
+      - name: Retrieve release distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: release-dists
+          path: dist/
+
+      - name: Publish release distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@v1.8.14
+        with:
+          password: ${{ secrets.PYPI_TOKEN }}

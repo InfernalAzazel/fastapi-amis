@@ -1,7 +1,7 @@
 from typing import Callable
 from pydantic import Field
-from fastapi_amis.amis.constants import *  # noqa
-from fastapi_amis.amis.types import *  # noqa
+from fastapi_amis.amis.constants import *
+from fastapi_amis.amis.types import *
 
 RemarkT = Union[str, "Remark"]
 
