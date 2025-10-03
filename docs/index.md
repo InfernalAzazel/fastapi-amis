@@ -1,14 +1,8 @@
 # FastAPI Amis
 
-<div align="center">
-
 **基于 FastAPI 和 Amis 的 Python 框架，用于快速构建现代化的管理后台界面**
 
-[![PyPI version](https://badge.fury.io/py/fastapi-amis.svg)](https://pypi.org/project/fastapi-amis/)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-
-</div>
+[![PyPI version](https://badge.fury.io/py/fastapi-amis.svg)](https://pypi.org/project/fastapi-amis/) [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 !!! warning "实验性项目"
     目前正在实验中，请不要投入生产项目
